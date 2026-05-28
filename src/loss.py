@@ -38,7 +38,7 @@ class FocalLoss(nn.Module):
         log_pt = log_pt.squeeze(1)                                 
         pt = log_pt.exp()                                    
         focal_weight = (1.0 - pt) ** self.gamma                    
-        focal_loss = -self.alpha * focal_weight * log_pt            )
+        focal_loss = -self.alpha * focal_weight * log_pt
         return focal_loss.mean()
 
 if __name__ == "__main__":
