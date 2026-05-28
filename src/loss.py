@@ -15,7 +15,7 @@ class FocalLoss(nn.Module):
         gamma (float): Focusing parameter. Higher gamma reduces loss for
                        easy (high-confidence) examples, forcing the model
                        to focus on hard ones.
-                       gamma=0 → identical to standard cross-entropy
+                       gamma=0 -> identical to standard cross-entropy
                        Typical value: 2.0
     """
 
@@ -38,7 +38,7 @@ class FocalLoss(nn.Module):
         log_pt = log_pt.squeeze(1)                                 
         pt = log_pt.exp()                                    
         focal_weight = (1.0 - pt) ** self.gamma                    
-        focal_loss = -self.alpha * focal_weight * log_pt            )
+        focal_loss = -self.alpha * focal_weight * log_pt
         return focal_loss.mean()
 
 if __name__ == "__main__":
