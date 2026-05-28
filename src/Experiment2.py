@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
     print(f"Using device: {device}\n")
 
-torch.manual_seed(42)
+    torch.manual_seed(42)
 
     X_train = torch.randn(400, INPUT_DIM)
     y_train = torch.randint(0, NUM_CLASSES, (400,))
@@ -169,7 +169,7 @@ torch.manual_seed(42)
     loss_fn   = FocalLoss(alpha=1.0, gamma=2.0)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
-       print("── Experiment 2: FocalLoss(alpha=1, gamma=2) — 10 Epochs ──\n")
+    print("── Experiment 2: FocalLoss(alpha=1, gamma=2) — 10 Epochs ──\n")
 
     exp2_train_losses = []
     exp2_val_losses   = []
@@ -204,13 +204,12 @@ torch.manual_seed(42)
             }, checkpoint_path)
             print(f"           ✓ checkpoint saved (val_acc={val_acc:.4f})")
 
-        print(f"\nexp2_train_losses = {exp2_train_losses}")
+    print(f"\nexp2_train_losses = {exp2_train_losses}")
     print(f"exp2_val_losses   = {exp2_val_losses}")
     print(f"exp2_val_accs     = {exp2_val_accs}")
     print(f"\nBest val_acc: {best_val_acc:.4f}")
     print(f"Checkpoint saved to: {checkpoint_path}")
 
-      print("\nGenerating plots...")
+    print("\nGenerating plots...")
     plot_val_accuracy(exp2_val_accs,    save_path="focal_val_accuracy.png")
-    plot_confusion_matrix(model, dummy_test, device, NUM_CLASSES,
-                          save_path="focal_confusion_matrix.png")
+    plot_confusion_matrix(model, dummy_test, device, NUM_CLASSES,save_path="focal_confusion_matrix.png")
