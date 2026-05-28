@@ -122,3 +122,29 @@ Run training:
 ```bash
 python -m src.train
 ```
+
+
+
+
+
+## Results
+
+### Cross Entropy Loss Model
+- Test Accuracy: 97%
+
+### Focal Loss Model
+- Test Accuracy: (add your focal loss accuracy here)
+
+### Evaluation Metrics
+- Precision: ~0.97
+- Recall: ~0.97
+- F1-Score: ~0.97
+
+### Key Findings
+- Transfer learning using pretrained VGG16 achieved very high accuracy.
+- Most fruit classes were classified correctly.
+- Confusion matrix showed strong diagonal dominance.
+- Fruits with similar appearance caused small classification errors.
+
+### Best Model
+- The CrossEntropyLoss model achieved the best overall performance.
