@@ -6,7 +6,7 @@ import torch.nn.functional as F
 class FocalLoss(nn.Module):
     """
     Focal Loss for multi-class classification.
-"""
+
     Formula: FL = -alpha * (1 - pt)^gamma * log(pt)
 
     Args:
@@ -15,9 +15,9 @@ class FocalLoss(nn.Module):
         gamma (float): Focusing parameter. Higher gamma reduces loss for
                        easy (high-confidence) examples, forcing the model
                        to focus on hard ones.
-                       gamma=0 → identical to standard cross-entropy
+                       gamma=0 -> identical to standard cross-entropy
                        Typical value: 2.0
-    
+    """
 
     def __init__(self, alpha: float = 0.25, gamma: float = 2.0):
         super().__init__()         
