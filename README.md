@@ -148,3 +148,123 @@ python -m src.train
 
 ### Best Model
 - The CrossEntropyLoss model achieved the best overall performance.
+
+#  FocalLoss Training — Experiment 2 -------------------------------------------------------------------------------------------------------
+
+A PyTorch project that trains a neural network using **Focal Loss** — a smarter loss function that helps the model focus on examples it keeps getting wrong.
+
+---
+
+## What's in this repo?
+
+| File | What it does |
+|---|---|
+| `src/experiment2.py` | Trains the model for 10 epochs, saves the best checkpoint, and generates plots |
+| `src/validate.py` | Checks how well the model is doing on data it hasn't trained on |
+| `src/loss.py` | Defines the Focal Loss formula |
+| `src/model.py` | The neural network architecture |
+| `checkpoint_focal.pth` | The best saved model weights (auto-generated after training) |
+| `focal_val_accuracy.png` | Graph of validation accuracy across 10 epochs (auto-generated) |
+| `focal_confusion_matrix.png` | Shows which classes the model confuses with each other (auto-generated) |
+
+---
+
+## What is Focal Loss and why use it?
+
+Normal loss functions treat every training example equally. The problem? If the model already handles easy examples confidently, they still eat up most of the gradient signal — and the model stops improving on the hard ones.
+
+**Focal Loss fixes this.** It automatically turns down the volume on easy examples and turns it up on hard ones.
+
+The formula:
+
+```
+FL = -alpha * (1 - pt)^gamma * log(pt)
+```
+
+- `pt` = how confident the model was on the correct class (0 to 1)
+- `gamma = 2` → easy examples (high `pt`) get down-weighted heavily
+- `alpha = 1` → no extra class balancing (use `0.25` if your classes are imbalanced)
+
+---
+
+ Train for 10 epochs**
+
+```bash
+python src/experiment2.py
+```
+
+This will:
+- Train using `FocalLoss(alpha=1.0, gamma=2.0)`
+- Print loss and accuracy after every epoch
+- Save the best model to `checkpoint_focal.pth` whenever val accuracy improves
+- Save `focal_val_accuracy.png` and `focal_confusion_matrix.png` when done
+
+---
+
+## Experiment 2 Results (dummy data)
+
+```python
+exp2_train_losses = [2.3662, 2.3073, 2.269, 2.2255, 2.1811, 2.1468, 2.0894, 2.0312, 1.971, 1.9161]
+exp2_val_losses   = [2.3748, 2.3789, 2.3862, 2.3987, 2.4089, 2.4254, 2.4384, 2.4497, 2.4739, 2.5005]
+exp2_val_accs     = [0.04, 0.06, 0.06, 0.06, 0.05, 0.06, 0.05, 0.05, 0.05, 0.04]
+```
+
+Best val accuracy: **0.06** at epoch 2. Checkpoint saved there.
+
+Train loss goes down steadily — the model is learning. Val loss creeping up is normal with random data (no real pattern to generalise from).
+
+---
+
+## How the checkpoint works
+
+The model only saves when validation accuracy improves — so `checkpoint_focal.pth` always holds your **best** model, not just the last epoch.
+
+To load it later:
+
+```python
+import torch
+from src.model import build_model
+
+model = build_model(num_classes=15)
+checkpoint = torch.load("checkpoint_focal.pth")
+model.load_state_dict(checkpoint["model_state_dict"])
+
+print(f"Loaded from epoch {checkpoint['epoch']} — val_acc: {checkpoint['val_acc']}")
+```
+
+---
+
+## How validate.py works
+
+`validate()` is a simple function that takes your model and runs it over a dataset without doing any training. It returns two numbers: average loss and accuracy.
+
+```python
+from src.validate import validate
+
+val_loss, val_acc = validate(model, val_loader, loss_fn, device)
+print(f"Loss: {val_loss:.4f} | Accuracy: {val_acc:.2%}")
+```
+
+Three things that matter inside it:
+
+- `model.eval()` — turns off dropout so the model behaves consistently
+- `torch.no_grad()` — skips building the gradient graph (faster, less memory)
+- `correct / total` — that's your accuracy
+---
+
+##  concepts used
+
+| `model.train()` | Tells the model it's in training mode — activates dropout etc. |
+| `model.eval()` | Tells the model it's being tested — turns off dropout |
+| `torch.no_grad()` | Don't track gradients — used during validation to save memory |
+| `loss.backward()` | Computes gradients via backpropagation |
+| `optimizer.step()` | Updates the model weights using those gradients |
+| `argmax(dim=1)` | Picks the class with the highest predicted score |
+| `checkpoint` | A saved snapshot of model weights at the best epoch |
+
+---
+
+## Reference
+
+Focal Loss was introduced in:
+> Lin et al., *Focal Loss for Dense Object Detection*, ICCV 2017 — https://arxiv.org/abs/1708.02002
