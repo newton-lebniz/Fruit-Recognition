@@ -153,16 +153,15 @@ if __name__ == "__main__":
 
     X_train = torch.randn(400, INPUT_DIM)
     y_train = torch.randint(0, NUM_CLASSES, (400,))
-    dummy_train = DataLoader(TensorDataset(X_train, y_train),
-                             batch_size=32, shuffle=True)
+    train_loader = DataLoader(train_dataset,batch_size=32,shuffle=True)
 
     X_val = torch.randn(100, INPUT_DIM)
     y_val = torch.randint(0, NUM_CLASSES, (100,))
-    dummy_val = DataLoader(TensorDataset(X_val, y_val), batch_size=32)
+    val_dataset = datasets.ImageFolder(root="dataset/valid",transform=transform)
 
     X_test = torch.randn(200, INPUT_DIM)
     y_test = torch.randint(0, NUM_CLASSES, (200,))
-    dummy_test = DataLoader(TensorDataset(X_test, y_test), batch_size=32)
+    test_dataset = datasets.ImageFolder(root="dataset/test",transform=transform)
 
     
     model     = SimpleNet(input_dim=INPUT_DIM, num_classes=NUM_CLASSES).to(device)
@@ -179,8 +178,8 @@ if __name__ == "__main__":
     checkpoint_path = "checkpoint_focal.pth"
 
     for epoch in range(1, EPOCHS + 1):
-        train_loss          = train_one_epoch(model, dummy_train, loss_fn, optimizer, device)
-        val_loss, val_acc   = validate(model, dummy_val, loss_fn, device)
+        train_loss          = train_one_epoch(model, train_loader, loss_fn, optimizer, device)
+        val_loss, val_acc   = validate(model,  val_dataset, loss_fn, device)
 
         exp2_train_losses.append(round(train_loss, 4))
         exp2_val_losses.append(round(val_loss, 4))
@@ -212,4 +211,4 @@ if __name__ == "__main__":
 
     print("\nGenerating plots...")
     plot_val_accuracy(exp2_val_accs,    save_path="focal_val_accuracy.png")
-    plot_confusion_matrix(model, dummy_test, device, NUM_CLASSES,save_path="focal_confusion_matrix.png")
+    plot_confusion_matrix(model, test_dataset, device, NUM_CLASSES,save_path="focal_confusion_matrix.png")
