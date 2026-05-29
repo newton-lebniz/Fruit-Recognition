@@ -25,7 +25,7 @@ Input (224×224×3)
 │  Block 5:  Conv(512) → Conv(512) →     │
 │            Conv(512) → Pool            │
 └───────────────────┬────────────────────┘
-                    │  7×7×512 → flatten
+                    │  7×7×512 → flatten → 25088
 ┌───────────────────▼────────────────────┐
 │  CLASSIFIER  (trainable)               │
 │                                        │
@@ -45,7 +45,7 @@ This works because early conv layers learn universal features (edges, textures, 
 
 ### Parameter Table
 
-| Component     | Parameters      | Trainable  |
+| Layer         | Parameters      | Trainable  |
 |---------------|-----------------|------------|
 | features      | 14,714,688      | frozen     |
 | classifier[0] | 102,764,544     | yes        |
@@ -53,9 +53,15 @@ This works because early conv layers learn universal features (edges, textures, 
 | classifier[6] | 61,455          | yes (new)  |
 | **Total**     | **134,321,999** | —          |
 | **Trainable** | **119,607,311** | yes        |
+| **Frozen**    | **14,714,688**  | No         |
 
-`classifier[6]` is the replaced head: `nn.Linear(4096, 15)` — the only layer that did not exist in the original VGG16.
+`classifier[6]` is the replaced head: `nn.Linear(4096, 15)`. It is the only layer that did not exist in the original VGG16.
 
+Verify at any time:
+```bash
+python -m src.model
+```
+ 
 ### Input Preprocessing
 
 All images are resized to 224×224 and normalised using ImageNet statistics:
@@ -79,26 +85,44 @@ Training augmentations: random horizontal flip, colour jitter (brightness, contr
 
 ## Experiments
 
-| Exp | Loss Function        | Epochs | Best Val Acc |
-|-----|----------------------|--------|--------------|
-| 1   | CrossEntropyLoss     | 10     | TBD          |
-| 2   | FocalLoss (a=1, g=2) | 10     | TBD          |
+| Exp | Loss Function        | Epochs | Optimizer     | Best Val Acc |
+|-----|----------------------|--------|---------------|--------------|
+| 1   | CrossEntropyLoss     | 10     | Adam lr=1e-4  | TBD          |
+| 2   | FocalLoss (α=1, γ=2) | 10     | Adam lr=1e-4  | TBD          |
+ 
+Both experiments use StepLR scheduler (step_size=5, gamma=0.1) and early stopping (patience=3).
+ 
+### Exp 1 — Training Loss Curve
+ 
+![Exp 1 Loss Curve](results/graphs/exp1_loss_curve.png)
+ 
+---
 
+## Training
+ 
+```bash
+# Full training run (Exp 1 + Exp 2)
+python -m src.train
+ 
+# Experiment 2 only
+python src/Experiment2.py
+```
 ---
 
 ## Project Structure
 
 ```
 src/
-  model.py       # VGG16 definition, build_model()
+  model.py       # VGG16 definition, build_model(), count_parameters()
   dataset.py     # ImageFolder loaders for train/val/test
   train.py       # train_one_epoch(), Experiment 1
   Validate.py    # validate() — val loss + accuracy
   loss.py        # FocalLoss implementation
+  plot_loss.py     # plot exp1 loss curve
+  Experiment2.py  # Experiment 2 (FocalLoss), confusion matrix, plots
 results/
   checkpoints/   # saved .pth files
   graphs/        # loss curve plots
-plot_loss.py     # plot exp1 loss curve
 README.md
 ```
 
@@ -110,22 +134,13 @@ README.md
 pip install torch torchvision matplotlib
 ```
 
-Place the dataset inside `data/` with this structure:
+Dataset inside `data/` with this structure:
 ```
 data/
   train/   # 15 subfolders, one per class
   val/     # 20% split from train
   test/    # Kaggle Test folder
 ```
-
-Run training:
-```bash
-python -m src.train
-```
-
-
-
-
 
 ## Results
 
