@@ -75,11 +75,14 @@ Training augmentations: random horizontal flip, colour jitter (brightness, contr
 
 ---
 
-## Dataset
+ taset
 
 - **Source:** [Kaggle — Fruit Recognition](https://www.kaggle.com/datasets/chrisfilo/fruit-recognition)
 - **Classes:** 15 fruit categories
 - **Split:** 80% train / 20% val (random split from Training folder), separate Test folder
+
+> Note:
+> The dataset is not included in the GitHub repository because of large file size limitations. Users must manually place the dataset inside the `data/` directory before training or evaluation.
 
 ---
 
@@ -95,6 +98,29 @@ Both experiments use StepLR scheduler (step_size=5, gamma=0.1) and early stoppin
 ### Exp 1 — Training Loss Curve
  
 ![Exp 1 Loss Curve](results/graphs/exp1_loss_curve.png)
+
+### Confusion Matrix
+
+The confusion matrix visualises how well the model classified each fruit class.
+
+* Strong diagonal values indicate correct predictions.
+* Off-diagonal values represent misclassifications.
+* Most classes achieved near-perfect classification accuracy.
+
+![Confusion Matrix](results/confusion_matrix.png)
+
+---
+
+### Prediction Grid
+
+A 3×5 prediction grid was generated to visualise model predictions.
+
+* Green titles indicate correct predictions.
+* Red titles indicate incorrect predictions.
+* Each image is resized to 224×224 before inference.
+
+![Prediction Grid](results/prediction_grid.png)
+
  
 ---
 
@@ -116,7 +142,7 @@ src/
   model.py       # VGG16 definition, build_model(), count_parameters()
   dataset.py     # ImageFolder loaders for train/val/test
   train.py       # train_one_epoch(), Experiment 1
-  Validate.py    # validate() — val loss + accuracy
+  validate.py    # validate() — val loss + accuracy
   loss.py        # FocalLoss implementation
   plot_loss.py     # plot exp1 loss curve
   Experiment2.py  # Experiment 2 (FocalLoss), confusion matrix, plots
@@ -141,6 +167,96 @@ data/
   val/     # 20% split from train
   test/    # Kaggle Test folder
 ```
+
+
+
+## How to Run
+
+### 1. Clone the Repository
+
+```bash
+git clone <https://github.com/newton-lebniz/Fruit-Recognition>
+cd Fruit-Recognition
+```
+
+---
+
+### 2. Install Dependencies
+
+```bash
+pip install torch torchvision matplotlib scikit-learn seaborn
+```
+
+---
+
+### 3. Download Dataset
+
+Create this folder structure inside the project:
+
+```plaintext
+data/
+    train/
+    val/
+    test/
+```
+
+Each folder should contain 15 fruit class folders.
+
+Example:
+
+```plaintext
+data/train/apple/
+data/train/banana/
+data/train/orange/
+```
+
+---
+
+### 4. Train the Model
+
+Run full training:
+
+```bash
+python -m src.train
+```
+
+This will:
+
+* Train Experiment 1 (CrossEntropyLoss)
+* Train Experiment 2 (FocalLoss)
+* Save best checkpoints
+* Apply learning rate scheduling
+* Apply early stopping
+
+---
+
+### 5. Evaluate the Model
+
+```bash
+python -m src.evaluate
+```
+
+This will:
+
+* Load saved checkpoints
+* Generate classification report
+* Generate confusion matrix heatmap
+* Generate prediction grid images
+
+---
+
+### 6. Output Files
+
+Generated outputs are saved in:
+
+```plaintext
+results/
+    checkpoints/
+    graphs/
+    confusion_matrix.png
+    prediction_grid.png
+```
+
 
 ## Results
 
