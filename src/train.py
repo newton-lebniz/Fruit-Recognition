@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     loss_fn = nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=2)
 
     scheduler = StepLR(
         optimizer,
