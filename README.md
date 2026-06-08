@@ -4,6 +4,50 @@
 
 ---
 
+## Team Contributions
+ 
+### Manswi - Model Architecture · Training Loop · Experiment 1
+ 
+**Code written:**
+- `src/model.py` - `build_model()` function: loads pretrained VGG16, freezes all conv layers, replaces `classifier[6]` with `nn.Linear(4096, 15)` for 15-class output; `count_parameters()` prints total, trainable, and frozen parameter counts
+- `src/train.py` - `train_one_epoch()`: implements the core forward pass → loss → `loss.backward()` → `optimizer.step()` training loop; outer epoch loop with validation call, early stopping, and checkpoint saving
+- Ran **Experiment 1** (CrossEntropyLoss baseline): 10 epochs, Adam lr=1e-4, StepLR scheduler; logged all train/val metrics to `ce_logs`
+**Evaluation & plots:**
+- Generated training loss curve for Experiment 1 (`results/graphs/exp1_loss_curve.png`)
+- Printed and documented the parameter count table (total: 134,321,999 · trainable: 119,607,311 · frozen: 14,714,688)
+**Documentation written:**
+- README sections: *Model Architecture*, *Transfer Learning Strategy*, *Parameter Table*, *Input Preprocessing*, *Training*
+---
+ 
+### Shital - Dataset Pipeline · Custom Loss Function · Experiment 2
+ 
+**Code written:**
+- `src/dataset.py` - `get_dataloaders()`: `torchvision.transforms` pipeline (Resize 224×224, RandomHorizontalFlip, ColorJitter, ToTensor, ImageNet Normalize); `ImageFolder` loading; 80/20 train/val random split; separate test loader
+- `src/loss.py` - `FocalLoss(nn.Module)`: implements FL = −α(1−pₜ)^γ log(pₜ) with configurable `alpha` and `gamma`; tested on dummy batches; `alpha=1.0, gamma=2.0` used in training
+- `src/Experiment2.py` - full Experiment 2 training run using FocalLoss; saves `checkpoint_focal.pth`; generates `focal_val_accuracy.png` and `focal_confusion_matrix.png`
+**Evaluation & plots:**
+- Ran **Experiment 2** (FocalLoss γ=2): 10 epochs, same optimizer/scheduler as Exp 1; tracked train loss, val loss, val accuracy per epoch
+- Built experiment comparison table (Exp 1 vs Exp 2: loss function, optimizer, best val accuracy)
+**Documentation written:**
+- README sections: *Dataset*, *Experiments table*, *What is Focal Loss and why use it?*, *Experiment 2 Results*, *FocalLoss reference (Lin et al. 2017)*
+---
+ 
+### Sriya - Evaluation Pipeline · Visualisations · GitHub & Integration
+ 
+**Code written:**
+- `src/validate.py` - `validate()`: runs `model.eval()` + `torch.no_grad()` loop over val/test loader; returns average loss and accuracy; used by both Experiment 1 and 2
+- `src/plot_loss.py` - `plot_loss_curve()`: plots training and validation loss curves per epoch; saves to `results/graphs/`
+- Evaluation scripts: `get_predictions()` → loads checkpoint → runs inference on test set → returns all true and predicted labels; `plot_confusion_matrix()` → seaborn heatmap with 15 class-name labels; `show_predictions()` → 3×5 prediction grid with green/red labels
+**Evaluation & plots:**
+- Generated confusion matrix heatmap (`results/confusion_matrix.png`) — identified most and least confused fruit classes
+- Generated 3×5 prediction grid (`results/prediction_grid.png`) — each cell shows input image at 224×224 + true label + predicted label
+- Ran final test set evaluation: cross-entropy model achieved **97% test accuracy** (precision ~0.97, recall ~0.97, F1 ~0.97)
+**GitHub & integration:**
+- Created and maintained the GitHub repository; managed branch merges; performed final end-to-end clean run to verify the full pipeline before submission
+**Documentation written:**
+- README sections: *Results*, *Key Findings*, *How to Run (all 6 steps)*, *Project Structure*, *Setup*, *Output Files*, *Key concepts table*
+---
+
 ## Model Architecture
 
 ### Base Model: VGG16
