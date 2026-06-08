@@ -1,4 +1,4 @@
-# Fruit Recognition — VGG16
+ # Fruit Recognition — VGG16
 
 15-class fruit image classifier built with transfer learning on a pretrained VGG16 backbone.
 
