@@ -86,6 +86,10 @@ if __name__ == "__main__":
     patience = 3
     counter = 0
 
+    exp1_train_losses = []
+    exp1_val_losses = []
+    exp1_val_accs = []
+
     # TRAINING LOOP
     for epoch in range(1, EPOCHS + 1):
 
@@ -107,6 +111,8 @@ if __name__ == "__main__":
         )
 
         exp1_train_losses.append(round(train_loss, 4))
+        exp1_val_losses.append(round(val_loss, 4))
+        exp1_val_accs.append(round(val_acc, 4))
 
         # PRINT METRICS
         print(f"\nEpoch {epoch:02d}/{EPOCHS}")
