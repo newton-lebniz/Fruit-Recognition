@@ -134,7 +134,7 @@ Training augmentations: random horizontal flip, colour jitter (brightness, contr
 
 | Exp | Loss Function        | Epochs | Optimizer     | Best Val Acc |
 |-----|----------------------|--------|---------------|--------------|
-| 1   | CrossEntropyLoss     | 10     | Adam lr=1e-4  | TBD          |
+| 1   | CrossEntropyLoss     | 10     | Adam lr=1e-4  | 97           |
 | 2   | FocalLoss (α=1, γ=2) | 10     | Adam lr=1e-4  | 84.6         |
  
 Both experiments use StepLR scheduler (step_size=5, gamma=0.1) and early stopping (patience=3).
