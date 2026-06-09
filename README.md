@@ -169,7 +169,6 @@ A 3×5 prediction grid was generated to visualise model predictions.
 
 ![Exp1-Prediction Grid](results/prediction_grid.png)
 
-![Exp2-Prediction Grid](results/Exp2_prediction.png)
 
  
 ---
