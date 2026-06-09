@@ -157,8 +157,6 @@ The confusion matrix visualises how well the model classified each fruit class.
 
 ![Confusion Matrix](results/confusion_matrix.png)
 
-![Experimnet2-Confusion Matrix](results/Exp2_confusion_matrix.png)
-
 ---
 
 ### Prediction Grid
