@@ -167,8 +167,9 @@ A 3×5 prediction grid was generated to visualise model predictions.
 * Red titles indicate incorrect predictions.
 * Each image is resized to 224×224 before inference.
 
-![Prediction Grid](results/prediction_grid.png)
+![Exp1-Prediction Grid](results/prediction_grid.png)
 
+![Exp2-Prediction Grid](results/Exp2_prediction.png)
 
  
 ---
