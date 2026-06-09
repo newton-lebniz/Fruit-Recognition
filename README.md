@@ -24,7 +24,7 @@
 **Code written:**
 - `src/dataset.py` - `get_dataloaders()`: `torchvision.transforms` pipeline (Resize 224×224, RandomHorizontalFlip, ColorJitter, ToTensor, ImageNet Normalize); `ImageFolder` loading; 80/20 train/val random split; separate test loader
 - `src/loss.py` - `FocalLoss(nn.Module)`: implements FL = −α(1−pₜ)^γ log(pₜ) with configurable `alpha` and `gamma`; tested on dummy batches; `alpha=1.0, gamma=2.0` used in training
-- `src/Experiment2.py` - full Experiment 2 training run using FocalLoss; saves `checkpoint_focal.pth`; generates `Exp2_accuracy.png` and `Exp2_confusion_matrix.png`
+- `src/Experiment2.py` - full Experiment 2 training run using FocalLoss; saves `checkpoint_focal.pth`; generates `Exp2_accuracy.png` 
 **Evaluation & plots:**
 - Ran **Experiment 2** (FocalLoss γ=2): 10 epochs, same optimizer/scheduler as Exp 1; tracked train loss, val loss, val accuracy per epoch
 - Built experiment comparison table (Exp 1 vs Exp 2: loss function, optimizer, best val accuracy)
