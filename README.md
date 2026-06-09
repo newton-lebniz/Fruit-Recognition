@@ -383,7 +383,7 @@ This will:
 
 ---
 
-## Experiment 2 Results (dummy data)
+## Experiment 2 Results 
 
 Best val accuracy: **0.08** at epoch 10. Checkpoint saved there.
 
