@@ -15,6 +15,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
+NUM_CLASSES = 15
+EPOCHS = 10
+LEARNING_RATE = 0.001
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+from torchvision import datasets, transforms
+
+from model import build_model
 
 import matplotlib
 matplotlib.use("Agg")           # no display needed — saves to file
@@ -27,21 +35,16 @@ import os, sys
 sys.path.append(os.path.dirname(__file__))
 from loss import FocalLoss
 
+transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
 
 
-class SimpleNet(nn.Module):
-    def __init__(self, input_dim=20, num_classes=15):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim, 128),
-            nn.ReLU(),
-            nn.Linear(128, 64),
-            nn.ReLU(),
-            nn.Linear(64, num_classes),
-        )
-    def forward(self, x):
-        return self.net(x)
-
+model = build_model(num_classes=NUM_CLASSES).to(device)
 
 def train_one_epoch(model, loader, loss_fn, optimizer, device):
     model.train()
@@ -151,20 +154,15 @@ if __name__ == "__main__":
 
     torch.manual_seed(42)
 
-    X_train = torch.randn(400, INPUT_DIM)
-    y_train = torch.randint(0, NUM_CLASSES, (400,))
-    train_loader = DataLoader(train_dataset,batch_size=32,shuffle=True)
+    train_dataset = datasets.ImageFolder(root="data/train", transform=transform)
+    val_dataset   = datasets.ImageFolder(root="data/val",   transform=transform)
+    test_dataset  = datasets.ImageFolder(root="data/test",  transform=transform)
 
-    X_val = torch.randn(100, INPUT_DIM)
-    y_val = torch.randint(0, NUM_CLASSES, (100,))
-    val_dataset = datasets.ImageFolder(root="dataset/valid",transform=transform)
-
-    X_test = torch.randn(200, INPUT_DIM)
-    y_test = torch.randint(0, NUM_CLASSES, (200,))
-    test_dataset = datasets.ImageFolder(root="dataset/test",transform=transform)
-
-    
-    model     = SimpleNet(input_dim=INPUT_DIM, num_classes=NUM_CLASSES).to(device)
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_loader   = DataLoader(val_dataset,   batch_size=32, shuffle=False)
+    test_loader  = DataLoader(test_dataset,  batch_size=32, shuffle=False)    
+   
+    model = build_model(num_classes=NUM_CLASSES).to(device)
     loss_fn   = FocalLoss(alpha=1.0, gamma=2.0)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
@@ -179,7 +177,7 @@ if __name__ == "__main__":
 
     for epoch in range(1, EPOCHS + 1):
         train_loss          = train_one_epoch(model, train_loader, loss_fn, optimizer, device)
-        val_loss, val_acc   = validate(model,  val_dataset, loss_fn, device)
+        val_loss, val_acc   = validate(model,  val_loader, loss_fn, device)
 
         exp2_train_losses.append(round(train_loss, 4))
         exp2_val_losses.append(round(val_loss, 4))
@@ -190,7 +188,7 @@ if __name__ == "__main__":
               f"Val Loss: {val_loss:.4f} | "
               f"Val Acc: {val_acc:.4f}")
 
-              if val_acc > best_val_acc:
+        if val_acc > best_val_acc:
             best_val_acc = val_acc
             torch.save({
                 "epoch":            epoch,
