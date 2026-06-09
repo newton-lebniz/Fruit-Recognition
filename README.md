@@ -24,7 +24,7 @@
 **Code written:**
 - `src/dataset.py` - `get_dataloaders()`: `torchvision.transforms` pipeline (Resize 224×224, RandomHorizontalFlip, ColorJitter, ToTensor, ImageNet Normalize); `ImageFolder` loading; 80/20 train/val random split; separate test loader
 - `src/loss.py` - `FocalLoss(nn.Module)`: implements FL = −α(1−pₜ)^γ log(pₜ) with configurable `alpha` and `gamma`; tested on dummy batches; `alpha=1.0, gamma=2.0` used in training
-- `src/Experiment2.py` - full Experiment 2 training run using FocalLoss; saves `checkpoint_focal.pth`; generates `focal_val_accuracy.png` and `focal_confusion_matrix.png`
+- `src/Experiment2.py` - full Experiment 2 training run using FocalLoss; saves `checkpoint_focal.pth`; generates `Exp2_accuracy.png` and `Exp2_confusion_matrix.png`
 **Evaluation & plots:**
 - Ran **Experiment 2** (FocalLoss γ=2): 10 epochs, same optimizer/scheduler as Exp 1; tracked train loss, val loss, val accuracy per epoch
 - Built experiment comparison table (Exp 1 vs Exp 2: loss function, optimizer, best val accuracy)
@@ -385,13 +385,7 @@ This will:
 
 ## Experiment 2 Results (dummy data)
 
-```python
-exp2_train_losses = [2.3662, 2.3073, 2.269, 2.2255, 2.1811, 2.1468, 2.0894, 2.0312, 1.971, 1.9161]
-exp2_val_losses   = [2.3748, 2.3789, 2.3862, 2.3987, 2.4089, 2.4254, 2.4384, 2.4497, 2.4739, 2.5005]
-exp2_val_accs     = [0.04, 0.06, 0.06, 0.06, 0.05, 0.06, 0.05, 0.05, 0.05, 0.04]
-```
-
-Best val accuracy: **0.06** at epoch 2. Checkpoint saved there.
+Best val accuracy: **0.08** at epoch 10. Checkpoint saved there.
 
 Train loss goes down steadily — the model is learning. Val loss creeping up is normal with random data (no real pattern to generalise from).
 
